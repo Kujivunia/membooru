@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ExpressionParseTreeBuilder.cs" />
+    <Compile Remove="IExpressionOperator.cs" />
+    <Compile Remove="IExpressionParseTree.cs" />
+    <Compile Remove="IExpressionParseTreeBuilder.cs" />
+    <Compile Remove="NonTerminalExpression.cs" />
+    <Compile Remove="opAND.cs" />
+    <Compile Remove="opNOT.cs" />
+    <Compile Remove="opOR.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ClassDiagram1.cd" />
+  </ItemGroup>
+
+</Project>
