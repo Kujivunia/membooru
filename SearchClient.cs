@@ -22,32 +22,12 @@ namespace membooru
     }
     class SearchClient
     {
-        public List<string> ExtractLowBracket(List<string> tokens)
+        private List<string> ExtractLowBracket(List<string> tokens)
         {
             int lastOpenBracket = 0;
             int closeBracket = 0;
             List<string> subBracket = new List<string>();
             int i = 0;
-            /*
-            foreach (string token in tokens)
-            {
-                if (token.Equals("("))
-                {
-                    lastOpenBracket = i;
-                }
-                i++;
-            }
-
-            for (int j = lastOpenBracket; j < tokens.Count - 1; j++)
-            {
-                if (tokens[j].Equals(")"))
-                {
-                    closeBracket = j;
-                    break;
-                }
-
-            }
-            */
             lastOpenBracket = ExtractLowBracketIndexs(tokens)[0];
             closeBracket = ExtractLowBracketIndexs(tokens)[1];
 
@@ -56,11 +36,12 @@ namespace membooru
                 subBracket.Add(tokens[j]);
             }
             
-            if (lastOpenBracket == closeBracket) return new List<string>();
+            if (lastOpenBracket == closeBracket) return 
+                    new List<string>();
             else
                 return subBracket;
         }
-        public int[] ExtractLowBracketIndexs(List<string> tokens)
+        private int[] ExtractLowBracketIndexs(List<string> tokens)
         {
             int[] result = new int[2];
             List<string> subBracket = new List<string>();
@@ -75,7 +56,7 @@ namespace membooru
                 i++;
             }
 
-            for (int j = result[0]; j < tokens.Count - 1; j++)
+            for (int j = result[0]; j < tokens.Count; j++)
             {
                 if (tokens[j].Equals(")"))
                 {
@@ -86,7 +67,7 @@ namespace membooru
 
             return result;
         }
-            public List<string> Bracketing(List<string> tokens)
+            private List<string> Bracketing(List<string> tokens)
         {
             string[] opPriority = new string[2];
             List<string> operators = new List<string>();
@@ -130,38 +111,11 @@ namespace membooru
 
             return operands;
         }
-        public List<string> FullBracketing(List<string> tokens)
+        private List<string> FullBracketing(List<string> tokens)
         {
-            /*
-            List<string> temp = new List<string>();
-            while (tokens.Count > 3)
-            {
-                temp.Clear();
-                temp.Add("(");
-                if (this.ExtractLowBracket(tokens).Count>0)
-                {
-                    temp.AddRange(this.Bracketing(this.ExtractLowBracket(tokens)));
-                    foreach (string s in tokens)
-                        Console.Write(s + "+");
-                    Console.WriteLine("end low");
-                }
-                else
-                {
-                    temp.AddRange(this.Bracketing(tokens));
-                    foreach (string s in tokens)
-                        Console.Write(s + "+");
-                    Console.WriteLine("end just");
-                }
-                temp.Add(")");
-                tokens = temp;
-                foreach (string s in tokens)
-                    Console.Write(s + "+");
-                Console.WriteLine("end iteration");
-            }
-            */
             List<string> temp = new List<string>();
             int[] brix = new int[2];
-            while (tokens.Count > 1)
+            while (tokens.Count > 3)
             {
                 temp.Clear();
                 if (this.ExtractLowBracket(tokens).Count > 0)
@@ -232,15 +186,20 @@ namespace membooru
             return root;
 
         }
-
+        public List<string>  SearchExpressionPreparing(string queu)
+        {
+            string tempStr = "(";
+            List<string> tempLst = FullBracketing(Tokenizer.Tokenize(queu));
+            foreach (string token in tempLst)
+            {
+                tempStr += token+" ";
+            }
+            tempStr += ")";
+            return Tokenizer.Tokenize(tempStr);
+        }
         public IBinaryExpression GetBinaryExpressionTree(List<string> tokens)
         {
-           /* while (tokens.Contains("("))
-            {
-                tokens = this.Bracketing(this.ExtractLowBracket(tokens));
-            }
-            tokens = Bracketing(tokens);*/
-            IBinaryExpression root = null; ;
+            IBinaryExpression root = null;
             root = this.PreBuild(tokens).GetExpressionTree();
             return root;
         }
