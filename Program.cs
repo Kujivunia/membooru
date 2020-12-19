@@ -30,13 +30,15 @@ namespace membooru
 
 
             tokenss.Clear();
+            tokenss.Add("(");
             tokenss.Add("spitfire");
             tokenss.Add("||");
             tokenss.Add("rd");
+            tokenss.Add(")");
             tokenss.Add("&&");
             tokenss.Add("soarin");
-            foreach (string s in temp.Bracketing(tokenss))
-                   Console.Write(s + " ");
+            foreach (string s in temp.FullBracketing(tokenss))
+                   Console.Write(s + "+");
 
         }
     }

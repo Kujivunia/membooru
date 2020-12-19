@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace membooru
 {
@@ -23,13 +22,13 @@ namespace membooru
     }
     class SearchClient
     {
-        private List<string> ExtractLowBracket(List<string> tokens)
+        public List<string> ExtractLowBracket(List<string> tokens)
         {
             int lastOpenBracket = 0;
             int closeBracket = 0;
             List<string> subBracket = new List<string>();
             int i = 0;
-
+            /*
             foreach (string token in tokens)
             {
                 if (token.Equals("("))
@@ -48,13 +47,46 @@ namespace membooru
                 }
 
             }
-            for (int j = lastOpenBracket; j <= closeBracket; j++)
+            */
+            lastOpenBracket = ExtractLowBracketIndexs(tokens)[0];
+            closeBracket = ExtractLowBracketIndexs(tokens)[1];
+
+            for (int j = lastOpenBracket + 1; j < closeBracket; j++)
             {
                 subBracket.Add(tokens[j]);
             }
-            return subBracket;
+            
+            if (lastOpenBracket == closeBracket) return new List<string>();
+            else
+                return subBracket;
         }
-        public List<string> Bracketing(List<string> tokens)
+        public int[] ExtractLowBracketIndexs(List<string> tokens)
+        {
+            int[] result = new int[2];
+            List<string> subBracket = new List<string>();
+            int i = 0;
+
+            foreach (string token in tokens)
+            {
+                if (token.Equals("("))
+                {
+                    result[0] = i;
+                }
+                i++;
+            }
+
+            for (int j = result[0]; j < tokens.Count - 1; j++)
+            {
+                if (tokens[j].Equals(")"))
+                {
+                    result[1] = j;
+                    break;
+                }
+            }
+
+            return result;
+        }
+            public List<string> Bracketing(List<string> tokens)
         {
             string[] opPriority = new string[2];
             List<string> operators = new List<string>();
@@ -98,8 +130,56 @@ namespace membooru
 
             return operands;
         }
-
-        private Node PreBuild(List<string> tokens)
+        public List<string> FullBracketing(List<string> tokens)
+        {
+            /*
+            List<string> temp = new List<string>();
+            while (tokens.Count > 3)
+            {
+                temp.Clear();
+                temp.Add("(");
+                if (this.ExtractLowBracket(tokens).Count>0)
+                {
+                    temp.AddRange(this.Bracketing(this.ExtractLowBracket(tokens)));
+                    foreach (string s in tokens)
+                        Console.Write(s + "+");
+                    Console.WriteLine("end low");
+                }
+                else
+                {
+                    temp.AddRange(this.Bracketing(tokens));
+                    foreach (string s in tokens)
+                        Console.Write(s + "+");
+                    Console.WriteLine("end just");
+                }
+                temp.Add(")");
+                tokens = temp;
+                foreach (string s in tokens)
+                    Console.Write(s + "+");
+                Console.WriteLine("end iteration");
+            }
+            */
+            List<string> temp = new List<string>();
+            int[] brix = new int[2];
+            while (tokens.Count > 1)
+            {
+                temp.Clear();
+                if (this.ExtractLowBracket(tokens).Count > 0)
+                {
+                    brix = this.ExtractLowBracketIndexs(tokens);
+                    temp.AddRange(this.Bracketing(this.ExtractLowBracket(tokens)));
+                    tokens[brix[0]] = temp[0];
+                    tokens.RemoveRange(brix[0]+1,brix[1]-brix[0]);
+                }
+                else
+                {
+                    temp.AddRange(this.Bracketing(tokens));
+                    tokens = temp;
+                }
+            }
+                return tokens;
+        }
+            private Node PreBuild(List<string> tokens)
         {
             Node root = new Node();
             Node currentNode = root;
@@ -148,7 +228,6 @@ namespace membooru
                 }
 
                 if (currentNode != null && currentNode.token.Equals("!") ) currentNode = currentNode.p;
-                //if (currentNode != null) Console.WriteLine("current token: " + token + "; current node: " + currentNode.token);
             }
             return root;
 
@@ -156,6 +235,11 @@ namespace membooru
 
         public IBinaryExpression GetBinaryExpressionTree(List<string> tokens)
         {
+           /* while (tokens.Contains("("))
+            {
+                tokens = this.Bracketing(this.ExtractLowBracket(tokens));
+            }
+            tokens = Bracketing(tokens);*/
             IBinaryExpression root = null; ;
             root = this.PreBuild(tokens).GetExpressionTree();
             return root;
