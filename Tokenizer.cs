@@ -13,7 +13,7 @@ namespace membooru
             query = query.ToLower();
             query = query.Trim();
             query = query + " ";
-            tokens.Add("(");
+            //tokens.Add("(");
             StringBuilder currentToken = new StringBuilder();
             foreach (char ch in query) 
             {                
@@ -30,7 +30,7 @@ namespace membooru
             }
             
             tokens.RemoveAll(item => item.Equals(""));
-            tokens.Add(")");
+            //tokens.Add(")");
             return tokens;
         }
     }

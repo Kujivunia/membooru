@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace membooru
 {
@@ -29,32 +28,46 @@ namespace membooru
             int closeBracket = 0;
             List<string> subBracket = new List<string>();
             int i = 0;
+            lastOpenBracket = ExtractLowBracketIndexs(tokens)[0];
+            closeBracket = ExtractLowBracketIndexs(tokens)[1];
+
+            for (int j = lastOpenBracket + 1; j < closeBracket; j++)
+            {
+                subBracket.Add(tokens[j]);
+            }
+            
+            if (lastOpenBracket == closeBracket) return 
+                    new List<string>();
+            else
+                return subBracket;
+        }
+        private int[] ExtractLowBracketIndexs(List<string> tokens)
+        {
+            int[] result = new int[2];
+            List<string> subBracket = new List<string>();
+            int i = 0;
 
             foreach (string token in tokens)
             {
                 if (token.Equals("("))
                 {
-                    lastOpenBracket = i;
+                    result[0] = i;
                 }
                 i++;
             }
 
-            for (int j = lastOpenBracket; j < tokens.Count - 1; j++)
+            for (int j = result[0]; j < tokens.Count; j++)
             {
                 if (tokens[j].Equals(")"))
                 {
-                    closeBracket = j;
+                    result[1] = j;
                     break;
                 }
+            }
 
-            }
-            for (int j = lastOpenBracket; j <= closeBracket; j++)
-            {
-                subBracket.Add(tokens[j]);
-            }
-            return subBracket;
+            return result;
         }
-        public List<string> Bracketing(List<string> tokens)
+            private List<string> Bracketing(List<string> tokens)
         {
             string[] opPriority = new string[2];
             List<string> operators = new List<string>();
@@ -98,8 +111,29 @@ namespace membooru
 
             return operands;
         }
-
-        private Node PreBuild(List<string> tokens)
+        private List<string> FullBracketing(List<string> tokens)
+        {
+            List<string> temp = new List<string>();
+            int[] brix = new int[2];
+            while (tokens.Count > 3)
+            {
+                temp.Clear();
+                if (this.ExtractLowBracket(tokens).Count > 0)
+                {
+                    brix = this.ExtractLowBracketIndexs(tokens);
+                    temp.AddRange(this.Bracketing(this.ExtractLowBracket(tokens)));
+                    tokens[brix[0]] = temp[0];
+                    tokens.RemoveRange(brix[0]+1,brix[1]-brix[0]);
+                }
+                else
+                {
+                    temp.AddRange(this.Bracketing(tokens));
+                    tokens = temp;
+                }
+            }
+                return tokens;
+        }
+            private Node PreBuild(List<string> tokens)
         {
             Node root = new Node();
             Node currentNode = root;
@@ -148,15 +182,24 @@ namespace membooru
                 }
 
                 if (currentNode != null && currentNode.token.Equals("!") ) currentNode = currentNode.p;
-                //if (currentNode != null) Console.WriteLine("current token: " + token + "; current node: " + currentNode.token);
             }
             return root;
 
         }
-
+        public List<string>  SearchExpressionPreparing(string queu)
+        {
+            string tempStr = "(";
+            List<string> tempLst = FullBracketing(Tokenizer.Tokenize(queu));
+            foreach (string token in tempLst)
+            {
+                tempStr += token+" ";
+            }
+            tempStr += ")";
+            return Tokenizer.Tokenize(tempStr);
+        }
         public IBinaryExpression GetBinaryExpressionTree(List<string> tokens)
         {
-            IBinaryExpression root = null; ;
+            IBinaryExpression root = null;
             root = this.PreBuild(tokens).GetExpressionTree();
             return root;
         }
