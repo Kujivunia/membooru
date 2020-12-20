@@ -59,7 +59,7 @@ namespace membooru
         public ICommand Interpret(string commandText)
         {
             List<string> tokens = this.TextCommandTokenizer(commandText);
-
+            if (tokens.Count < 1) return new cmdError();
             if (tokens[0].ToLower().Equals("addfile"))
             {
                 return new cmdAddFile(tokens.GetRange(1,tokens.Count-1));
@@ -76,6 +76,16 @@ namespace membooru
             {
                 return new cmdFindFilies(tokens.GetRange(1, tokens.Count - 1));
             }
+            if (tokens[0].ToLower().Equals("help"))
+            {
+                return new cmdHelp();
+            }
+            if (tokens[0].ToLower().Equals("exit"))
+            {
+                return new cmdExit();
+            }
+            else
+                return new cmdError();
 
             throw new NotImplementedException();
         }
