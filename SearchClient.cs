@@ -14,10 +14,19 @@ namespace membooru
         public string token = "";
         public IBinaryExpression GetExpressionTree()
         {
-            if (token.Equals("&&")) return new Conjunction(l.GetExpressionTree(),r.GetExpressionTree());
-            if (token.Equals("||")) return new Disjunction(l.GetExpressionTree(), r.GetExpressionTree());
-            if (token.Equals("!")) return new Negation(l.GetExpressionTree());
-            else return new TerminalExpression(token);
+            if (token.Equals("&&")) 
+                return new Conjunction(l.GetExpressionTree(),r.GetExpressionTree());
+
+            if (token.Equals("||")) 
+                return new Disjunction(l.GetExpressionTree(), r.GetExpressionTree());
+
+            if (token.Equals("!")) 
+                return new Negation(l.GetExpressionTree());
+
+            if (token.Equals("(") && r == null)
+                return new BinaryExpressionRoot(l.GetExpressionTree());
+            else
+                return new TerminalExpression(token);
         }
     }
     class SearchClient
@@ -27,7 +36,6 @@ namespace membooru
             int lastOpenBracket = 0;
             int closeBracket = 0;
             List<string> subBracket = new List<string>();
-            int i = 0;
             lastOpenBracket = ExtractLowBracketIndexs(tokens)[0];
             closeBracket = ExtractLowBracketIndexs(tokens)[1];
 
@@ -143,6 +151,7 @@ namespace membooru
                 {
                     case "(":
                         {
+                            currentNode.token = token;
                             currentNode.l = new Node(currentNode);
                             currentNode = currentNode.l;
                             break;
@@ -192,7 +201,7 @@ namespace membooru
             List<string> tempLst = FullBracketing(Tokenizer.Tokenize(queu));
             foreach (string token in tempLst)
             {
-                tempStr += token+" ";
+                tempStr += " "+token+" ";
             }
             tempStr += ")";
             return Tokenizer.Tokenize(tempStr);

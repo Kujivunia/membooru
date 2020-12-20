@@ -4,17 +4,18 @@ namespace membooru
 {
     class cmdRemoveFile : ICommand
     {
-        string path;
+        int id;
         List<string> tags = new List<string>();
         public cmdRemoveFile(List<string> tokens)
         {
-            path = tokens[0];
-            tokens.RemoveAt(0);
-
+            id = int.Parse(tokens[0]);
+            
         }
+
         public bool Execute()
         {
-
+            System.IO.File.Delete(id+".json");
+            SingletonFiliesInfo.RemoveFileInfo(id);
             return true;
         }
     }
