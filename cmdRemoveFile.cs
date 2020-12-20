@@ -14,7 +14,7 @@ namespace membooru
 
         public bool Execute()
         {
-            System.IO.File.Delete(id+".json");
+            System.IO.File.Delete(System.IO.Directory.GetCurrentDirectory()+"\\jsons\\"+id +".json");
             SingletonFiliesInfo.RemoveFileInfo(id);
             return true;
         }

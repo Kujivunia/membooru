@@ -5,30 +5,26 @@ namespace membooru
     class cmdAddTags : ICommand
     {
         string path, json;
+        int id;
         List<string> tags = new List<string>();
+        List<string> tokens = new List<string>();
         FileInfo info = new FileInfo();
         public cmdAddTags(List<string> tokens)
         {
-            path = tokens[0];
+            tokens.ForEach(token => tags.Add(token));
+            id = int.Parse(tokens[0]);
             tokens.RemoveAt(0);
-            info.tags = new List<string>();
-            tokens.ForEach(token => info.tags.Add(token));
-            info.view_url = path;
-
-            info.id = SingletonGlobalID.GetNewID();
-        }
-        private async void write()
-        {
-            info.created_at = System.DateTime.Now;
-            SingletonFiliesInfo.AddFileInfo(info);
-            json = System.Text.Json.JsonSerializer.Serialize<FileInfo>(info);
-            System.IO.StreamWriter jsonwriter = new System.IO.StreamWriter(info.id + ".json", false, System.Text.Encoding.Default);
-            await jsonwriter.WriteLineAsync(json);
-            jsonwriter.Close();
+            info = SingletonFiliesInfo.GetFileInfoFromID(id);
+            foreach (string token in tags)
+            {
+                if (!info.tags.Contains(token)) info.tags.Add(token);
+            }
         }
         public bool Execute()
         {
-            write();
+            SingletonFiliesInfo.RemoveFileInfo(id);
+            SingletonFiliesInfo.AddFileInfo(info);
+            new cmdAddFile(tags);
             return true;
         }
     }

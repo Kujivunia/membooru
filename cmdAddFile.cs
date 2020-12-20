@@ -22,7 +22,7 @@ namespace membooru
             info.created_at = System.DateTime.Now;
             SingletonFiliesInfo.AddFileInfo(info);
             json = System.Text.Json.JsonSerializer.Serialize<FileInfo>(info);
-            System.IO.StreamWriter jsonwriter = new System.IO.StreamWriter(info.id + ".json", false, System.Text.Encoding.Default);
+            System.IO.StreamWriter jsonwriter = new System.IO.StreamWriter(System.IO.Directory.GetCurrentDirectory() + "\\jsons\\" + info.id + ".json", false, System.Text.Encoding.Default);
             await jsonwriter.WriteLineAsync(json);
             jsonwriter.Close();
         }

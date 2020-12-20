@@ -64,10 +64,10 @@ namespace membooru
             {
                 return new cmdAddFile(tokens.GetRange(1,tokens.Count-1));
             }
-            if (tokens[0].ToLower().Equals("addtags"))
+            /*if (tokens[0].ToLower().Equals("addtags"))
             {
                 return new cmdAddTags(tokens.GetRange(1, tokens.Count - 1));
-            }
+            }*/
             if (tokens[0].ToLower().Equals("removefile"))
             {
                 return new cmdRemoveFile(tokens.GetRange(1, tokens.Count - 1));
@@ -79,6 +79,10 @@ namespace membooru
             if (tokens[0].ToLower().Equals("help"))
             {
                 return new cmdHelp();
+            }
+            if (tokens[0].ToLower().Equals("cls"))
+            {
+                return new cmdCls();
             }
             if (tokens[0].ToLower().Equals("exit"))
             {
